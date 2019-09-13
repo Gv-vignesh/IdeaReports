@@ -1,27 +1,30 @@
 <template>
   <div id="app">
-    <Welcome msg="Welcome to Idea-Reports"/>
+    <Header />
+    <Section />
+    <!-- <div id="nav">
+       <md-button class="md-raised md-primary"><router-link to="/">Home</router-link></md-button>
+      <router-link to="/about">About</router-link>
+    </div>
+    <router-view/> -->
   </div>
 </template>
 
 <script>
-import Welcome from './components/Welcome.vue'
+import Header from './components/Header.vue'
+import Section from './components/Section.vue'
 
 export default {
   name: 'app',
   components: {
-    Welcome
+    Header,
+    Section
   }
 }
 </script>
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  background: #FAFAFA;
 }
 </style>
