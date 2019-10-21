@@ -1,0 +1,36 @@
+.md-dialog {
+    max-width: 900px;
+}
+
+.md-textarea {
+    margin-top: 1vh;
+}
+
+.md-layout-item {
+    margin: 1px 0;
+    border-style: solid;
+
+}
+
+.header-details {
+    font-family: "Avenir", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+}
+
+.footer-details {
+    font-family: "Avenir", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+}
+
+.md-progress-bar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+}
