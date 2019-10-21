@@ -1,0 +1,122 @@
+<div>
+    <md-card-actions v-if="action=='Edit'">
+        <md-button type="button" @click="readOnly = false, action = 'Update'" class="md-primary">{{action}} Report
+        </md-button>
+        <md-button type="button" @click="clearForm()" class="md-accent">Clear</md-button>
+    </md-card-actions>
+    <form novalidate @submit.prevent="validateReport">
+        <md-card class="md-layout md-gutter">
+            <md-card-content class="md-layout-item md-layout md-size-20">
+                <div>
+                    <md-dialog :md-active.sync="showDialog">
+                        <md-dialog-title>Filter</md-dialog-title>
+
+                        <md-dialog-content>
+                            <md-card-content class="md-layout md-gutter">
+                                <div class="md-layout-item md-size-100">
+                                    <md-field :class="getValidationClass('filterName')">
+                                        <label for="report-name">Filter Name</label>
+                                        <md-input name="filter-name" id="report-name" v-model="form.filterName"
+                                            :disabled="readOnly" />
+                                        <span class="md-error" v-if="!$v.form.filterName.required">The filter name is
+                                            required</span>
+                                        <span class="md-error" v-else-if="!$v.form.filterName.minlength">Invalid filter
+                                            name</span>
+                                    </md-field>
+                                </div>
+                                <div class="md-layout-item md-size-100">
+                                    <md-field>
+                                        <label for="font">Filter Type</label>
+                                        <md-select v-model="form.filterType" name="font" id="font">
+                                            <md-option value="singleSelect">Single Select</md-option>
+                                            <md-option value="multiSelect">Multi Select</md-option>
+                                        </md-select>
+                                    </md-field>
+                                </div>
+                                <div class="md-layout-item md-size-100">
+                                    <md-field :class="getValidationClass('filterQueryName')">
+                                        <label for="query-name">Query Name</label>
+                                        <md-input name="query-name" id="query-name" v-model="form.filterQueryName"
+                                            :disabled="readOnly" />
+                                        <span class="md-error" v-if="!$v.form.filterQueryName.required">The query name
+                                            is required</span>
+                                        <span class="md-error" v-else-if="!$v.form.filterQueryName.minlength">Invalid
+                                            query name</span>
+                                    </md-field>
+                                </div>
+                                <div class="md-layout-item md-size-100">
+                                    <md-field>
+                                        <label>Query</label>
+                                        <md-textarea v-model="form.filterQuery" md-autogrow :disabled="readOnly">
+                                        </md-textarea>
+                                    </md-field>
+                                </div>
+                            </md-card-content>
+                        </md-dialog-content>
+                        <md-dialog-actions>
+                            <md-button class="md-primary" @click="clearFilter()">Close</md-button>
+                            <md-button class="md-primary" @click="saveFilter()">{{filterAction}}</md-button>
+                        </md-dialog-actions>
+                    </md-dialog>
+                    <md-button class="md-icon-button md-accent md-raised" @click="showDialog = true"
+                        :disabled="readOnly">
+                        <md-icon>add</md-icon>
+                        <md-tooltip md-direction="right">Add Filter</md-tooltip>
+                    </md-button>
+                    <md-list id="filterList" v-if="filters.length > 0">
+                        <md-list-item v-for="filter in filters" v-bind:key="filter.id" @click="loadFilter()">
+                            {{ filter.filterName }}
+                        </md-list-item>
+                    </md-list>
+                </div>
+            </md-card-content>
+            <div class="md-layout-item md-layout md-size-80">
+                <md-card-header class="md-layout-item md-size-100">
+                    <div class="md-title">Header</div>
+                </md-card-header>
+                <md-card-content class="md-layout md-gutter">
+                    <div class="md-layout-item md-size-100">
+                        <md-field :class="getValidationClass('reportName')">
+                            <label for="report-name">Report Name</label>
+                            <md-input name="report-name" id="report-name" v-model="form.reportName"
+                                :disabled="readOnly" />
+                            <span class="md-error" v-if="!$v.form.reportName.required">The report name is
+                                required</span>
+                            <span class="md-error" v-else-if="!$v.form.reportName.minlength">Invalid report name</span>
+                        </md-field>
+                    </div>
+                    <div class="md-layout-item md-size-100">
+                        <md-field>
+                            <label>Report Description</label>
+                            <md-textarea v-model="form.reportDescription" md-autogrow :disabled="readOnly">
+                            </md-textarea>
+                        </md-field>
+                    </div>
+                    <div class="md-layout-item md-size-100">
+                        <md-field :class="getValidationClass('queryName')">
+                            <label for="query-name">Query Name</label>
+                            <md-input name="query-name" id="query-name" v-model="form.queryName" :disabled="readOnly" />
+                            <span class="md-error" v-if="!$v.form.queryName.required">The query name is required</span>
+                            <span class="md-error" v-else-if="!$v.form.queryName.minlength">Invalid query name</span>
+                        </md-field>
+                    </div>
+                    <div class="md-layout-item md-size-100">
+                        <md-field>
+                            <label>Query</label>
+                            <md-textarea v-model="form.query" md-autogrow :disabled="readOnly"></md-textarea>
+                        </md-field>
+                    </div>
+                </md-card-content>
+                <md-card-header class="md-layout-item md-size-100">
+                    <div class="md-title">Footer</div>
+                </md-card-header>
+            </div>
+            <md-progress-bar md-mode="indeterminate" v-if="processing" />
+            <md-card-actions v-if="action!='Edit'">
+                <md-button type="submit" class="md-primary" :disabled="readOnly">{{action}} Report</md-button>
+                <md-button type="button" @click="clearForm()" class="md-accent">Cancel</md-button>
+            </md-card-actions>
+        </md-card>
+        <md-snackbar :md-active.sync="reportSaved">The {{ form.reportName }} Report has been {{action}}d</md-snackbar>
+    </form>
+</div>
